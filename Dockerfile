@@ -16,11 +16,8 @@ COPY keepalive.js /usr/src/app/keepalive.js
 # 5️⃣  Normalizar saltos de línea y permisos
 RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
-# 6️⃣  Instalar Node.js + dependencias necesarias
-RUN apk add --no-cache nodejs npm curl && \
-    mkdir -p /usr/src/app && cd /usr/src/app && \
-    npm init -y && \
-    
+#
+RUN apk add --no-cache nodejs npm curl
 
 # 7️⃣  Exponer puerto
 EXPOSE 80
