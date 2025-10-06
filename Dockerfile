@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-# Update all packages to their latest versions to reduce vulnerabilities
+# Actualizar paquetes base
 RUN apk update && apk upgrade
 
 # Copiar configuración personalizada de Nginx
@@ -13,11 +13,14 @@ COPY websites /usr/share/nginx/html
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY keepalive.js /usr/src/app/keepalive.js
 
-# Dar permisos de ejecución e instalar Node.js para ejecutar el keepalive
-RUN chmod +x /docker-entrypoint.sh && apk add --no-cache curl nodejs npm
+# Convertir saltos de línea y dar permisos de ejecución
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
-# Exponer puerto 80 (Render lo detectará)
+# Instalar Node.js para el keepalive
+RUN apk add --no-cache curl nodejs npm
+
+# Exponer puerto
 EXPOSE 80
 
-# __define-ocg__ punto de entrada con exec form
-CMD ["/docker-entrypoint.sh"]
+# Punto de entrada principal (forma correcta)
+ENTRYPOINT ["/docker-entrypoint.sh"]
