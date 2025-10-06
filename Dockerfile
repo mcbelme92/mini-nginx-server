@@ -18,6 +18,7 @@ RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
 # 6️⃣  Instalar Node.js + dependencias necesarias
 RUN apk add --no-cache nodejs npm curl && \
+    mkdir -p /usr/src/app && cd /usr/src/app && \
     npm init -y && \
     npm install node-fetch@3
 
