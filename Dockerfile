@@ -1,26 +1,28 @@
 FROM nginx:alpine
 
-# Actualizar paquetes base
+# 1️⃣  Actualizar paquetes base
 RUN apk update && apk upgrade
 
-# Copiar configuración personalizada de Nginx
+# 2️⃣  Copiar configuración de Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copiar tus sitios web
+# 3️⃣  Copiar sitios web (React build)
 COPY websites /usr/share/nginx/html
 
-# Copiar scripts
+# 4️⃣  Copiar scripts auxiliares
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY keepalive.js /usr/src/app/keepalive.js
 
-# Convertir saltos de línea y dar permisos de ejecución
+# 5️⃣  Normalizar saltos de línea y permisos
 RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
-# Instalar Node.js para el keepalive
-RUN apk add --no-cache curl nodejs npm
+# 6️⃣  Instalar Node.js + dependencias necesarias
+RUN apk add --no-cache nodejs npm curl && \
+    npm init -y && \
+    npm install node-fetch@3
 
-# Exponer puerto
+# 7️⃣  Exponer puerto
 EXPOSE 80
 
-# Punto de entrada principal (forma correcta)
+# 8️⃣  Entry point del contenedor
 ENTRYPOINT ["/docker-entrypoint.sh"]
