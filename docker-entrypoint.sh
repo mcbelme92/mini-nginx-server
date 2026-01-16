@@ -1,8 +1,11 @@
 #!/bin/sh
 set -e
 
-# Inicia el keepalive en segundo plano
+# Arranca PHP-FPM en background
+php-fpm -D
+
+# (Opcional) keepalive
 node /usr/src/app/keepalive.js &
 
-# Inicia Nginx en primer plano (proceso principal del contenedor)
+# Arranca nginx en foreground
 exec nginx -g "daemon off;"
