@@ -1,17 +1,20 @@
 FROM php:8.2-fpm-alpine
 
-RUN apk add --no-cache nginx nodejs npm curl
+# Instalar nginx + utilidades
+RUN apk add --no-cache nginx curl nodejs npm
 
-# PHP + Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY default.conf /etc/nginx/conf.d/default.conf
+# Copiar config de nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copiar sitios
 COPY websites /usr/share/nginx/html
 
-# Node
-WORKDIR /app
-COPY node ./node
-RUN cd node && npm init -y && npm install express
+# Copiar scripts
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY keepalive.js /usr/src/app/keepalive.js
+
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
 
-CMD sh -c "php-fpm -D && node /app/node/server.js & nginx -g 'daemon off;'"
+CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
