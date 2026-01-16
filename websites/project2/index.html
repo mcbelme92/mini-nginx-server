@@ -4,5 +4,15 @@
   <body style="font-family: sans-serif; background: #222; color: #0f0;">
     <h1>🚀 Project 2</h1>
     <p>This is Project 1 running on Render + Nginx.</p>
+        <script>
+      window.addEventListener("message", (event) => {
+        console.log("postMessage recibido:", event.data);
+
+        // ejemplo de validación mínima
+        if (event.data?.messageType === "CRes") {
+          alert("3DS Challenge recibido");
+        }
+      });
+    </script>
   </body>
 </html>
