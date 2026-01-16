@@ -1,26 +1,20 @@
-FROM nginx:alpine
+FROM php:8.2-fpm-alpine
 
-# 1️⃣  Actualizar paquetes base
-RUN apk update && apk upgrade
+# Instalar nginx + utilidades
+RUN apk add --no-cache nginx curl nodejs npm
 
-# 2️⃣  Copiar configuración de Nginx
+# Copiar config de nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# 3️⃣  Copiar sitios web (React build)
+# Copiar sitios
 COPY websites /usr/share/nginx/html
 
-# 4️⃣  Copiar scripts auxiliares
+# Copiar scripts
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY keepalive.js /usr/src/app/keepalive.js
 
-# 5️⃣  Normalizar saltos de línea y permisos
 RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
-#
-RUN apk add --no-cache nodejs npm curl
-
-# 7️⃣  Exponer puerto
 EXPOSE 80
 
-# 8️⃣  Entry point del contenedor
-ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
